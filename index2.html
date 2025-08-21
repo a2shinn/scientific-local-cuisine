@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テスト用サイト - 動作確認</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .success {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .button {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 テスト成功！</h1>
+        <div class="success">
+            ✅ GitHubサイトが正常に動作しています！
+        </div>
+        
+        <p>このページが表示されていれば、GitHubのセットアップは完璧です！</p>
+        
+        <div class="info">
+            <h2>🔧 確認できたこと</h2>
+            <p>✅ ファイルアップロード：成功</p>
+            <p>✅ GitHub Pages：動作中</p>
+            <p>✅ HTML/CSS：正常表示</p>
+            <p>✅ 日本語：表示OK</p>
+        </div>
+        
+        <p><strong>次のステップ：</strong><br>
+        この基本テストが成功したら、本格的な郷土料理サイトに差し替えます！</p>
+        
+        <button class="button" onclick="showAlert()">動作テスト</button>
+        
+        <div class="info" style="margin-top: 30px;">
+            <h3>📊 サイトの情報</h3>
+            <p>URL: <span id="current-url"></span></p>
+            <p>時刻: <span id="current-time"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function showAlert() {
+            alert('🎉 JavaScript も正常に動作しています！');
+        }
+        
+        // 現在のURLと時刻を表示
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('current-time').textContent = new Date().toLocaleString('ja-JP');
+        
+        // ページ読み込み完了を知らせる
+        window.addEventListener('load', function() {
+            console.log('✅ ページ読み込み完了 - GitHub Pages動作中');
+        });
+    </script>
+</body>
+</html>
