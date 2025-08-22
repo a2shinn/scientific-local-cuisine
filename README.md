@@ -964,21 +964,23 @@ index.html
             </div>
             <div class="modal-body">
                 <div id="modalContent"></div>
-                <div class="comments-section">
-                    <h3>💬 研究コメント・ディスカッション</h3>
-                    <div class="comment-form">
-                        <h4>コメントを投稿</h4>
-                        <div class="comment-input-group">
-                            <input type="text" id="commentAuthor" placeholder="お名前 (研究者名・所属など)" required>
-                            <textarea id="commentText" placeholder="研究に対するコメント、質問、追加情報などをお書きください..." required></textarea>
-                            <button class="btn btn-primary" onclick="addComment()">💬 コメント投稿</button>
-                        </div>
-                    </div>
-                    <div class="comments-list" id="commentsList">
-                        <!-- コメントがここに動的に追加されます -->
-                    </div>
-                </div>
-            </div>
+             
+            </div<script src="https://giscus.app/client.js"
+        data-repo="a2shinn/scientific-local-cuisine"
+        data-repo-id="R_kgDOPhfkSQ"
+        data-category="General"
+        data-category-id="DIC_kwDOPhfkSc4Cuekx"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="1"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="ja"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+</script>>
         </div>
     </div>
 
