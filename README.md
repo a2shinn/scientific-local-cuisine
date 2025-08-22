@@ -1,10 +1,10 @@
- index.html         
-             <!DOCTYPE html>
+index.html
+ <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>郷土料理科学研究所 - 論文・統計・コメント機能付き</title>
+    <title>郷土料理科学研究所 - コメント機能付き完全版</title>
     <style>
         * {
             margin: 0;
@@ -63,7 +63,6 @@
             color: #4a5568;
             font-weight: 500;
             transition: color 0.3s ease;
-            position: relative;
         }
         
         .nav-links a:hover {
@@ -201,6 +200,103 @@
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
+        }
+        
+        /* 成功メッセージ */
+        .success-message {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.5s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 保存状態インジケーター */
+        .save-indicator {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            display: none;
+            z-index: 1001;
+            animation: fadeInRight 0.5s ease;
+        }
+        
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* フォーム */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
         }
         
         /* 検索セクション */
@@ -401,10 +497,19 @@
             margin-bottom: 0.5rem;
         }
         
-        .research-citation {
-            font-size: 0.8rem;
-            color: #666;
-            font-style: italic;
+        .nutrition-section {
+            background: #f0f9ff;
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 4px solid #10b981;
+            margin: 1rem 0;
+        }
+        
+        .nutrition-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #047857;
+            margin-bottom: 0.5rem;
         }
         
         .article-footer {
@@ -437,63 +542,137 @@
         }
         
         .comments-count {
-            color: #666;
+            color: #667eea;
             font-size: 0.9rem;
-        }
-        
-        /* フォーム */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
             font-weight: bold;
+        }
+        
+        /* モーダル */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: white;
+            transition: color 0.3s ease;
+        }
+        
+        .close:hover {
+            color: #ddd;
+        }
+        
+        /* コメントセクション */
+        .comments-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .comment-form {
+            background: #f8f9ff;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+        
+        .comment-form h4 {
+            margin-bottom: 1rem;
             color: #4a5568;
         }
         
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .comment-input-group {
+            margin-bottom: 1rem;
+        }
+        
+        .comment-input-group input,
+        .comment-input-group textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #e2e8f0;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
+            margin-bottom: 0.5rem;
         }
         
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
+        .comment-input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .comment-input-group input:focus,
+        .comment-input-group textarea:focus {
             outline: none;
             border-color: #667eea;
         }
         
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
+        .comments-list {
+            space: 1rem;
         }
         
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
+        .comment {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comment-author {
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-right: 1rem;
+            color: #4a5568;
         }
         
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
+        .comment-date {
+            color: #666;
+            font-size: 0.9rem;
         }
         
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        .comment-text {
+            color: #555;
+            line-height: 1.5;
         }
         
         /* レスポンシブ */
@@ -519,6 +698,11 @@
             .articles-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
         }
         
         @keyframes fadeInUp {
@@ -532,9 +716,40 @@
             }
         }
         
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
         /* 特別バッジ */
         .research-badge {
             background: linear-gradient(45deg, #11998e, #38ef7d);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+        
+        .auto-save-badge {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+        
+        .comment-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
             padding: 3px 8px;
             border-radius: 12px;
@@ -557,6 +772,11 @@
         </nav>
     </header>
 
+    <!-- 自動保存インジケーター -->
+    <div class="save-indicator" id="saveIndicator">
+        ✅ 記事が自動保存されました
+    </div>
+
     <main class="container">
         <section id="home" class="hero">
             <h1>🔬 郷土料理科学研究所</h1>
@@ -568,7 +788,7 @@
                 </div>
                 <div class="hero-stat">
                     <span class="hero-stat-number" id="heroPapers">0</span>
-                    <span class="hero-stat-label">引用論文数</span>
+                    <span class="hero-stat-label">投稿論文数</span>
                 </div>
                 <div class="hero-stat">
                     <span class="hero-stat-number" id="heroComments">0</span>
@@ -583,15 +803,21 @@
                 <button class="admin-tab active" onclick="switchTab('create')">✏️ 記事投稿</button>
                 <button class="admin-tab" onclick="switchTab('analytics')">📊 分析</button>
                 <button class="admin-tab" onclick="switchTab('manage')">📝 管理</button>
+                <button class="admin-tab" onclick="switchTab('backup')">💾 バックアップ</button>
             </div>
 
             <!-- 記事投稿タブ -->
             <div id="create-tab" class="tab-content active">
-                <h3>✏️ 新しい研究記事を投稿</h3>
+                <h3>✏️ 新しい研究記事を投稿 <span class="auto-save-badge">自動保存</span><span class="comment-badge">コメント機能</span></h3>
+                
+                <div class="success-message" id="successMessage">
+                    🎉 記事が正常に投稿・保存されました！
+                </div>
+                
                 <form id="articleForm">
                     <div class="form-group">
-                        <label for="title">記事タイトル</label>
-                        <input type="text" id="title" name="title" placeholder="例：味噌の発酵過程における機能性成分の変化">
+                        <label for="title">記事タイトル *</label>
+                        <input type="text" id="title" name="title" placeholder="例：味噌の発酵過程における機能性成分の変化" required>
                     </div>
                     
                     <div class="form-group">
@@ -615,21 +841,22 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="description">研究概要</label>
-                        <textarea id="description" name="description" placeholder="この研究の目的、方法、主要な発見について簡潔に説明してください..."></textarea>
+                        <label for="description">研究概要 *</label>
+                        <textarea id="description" name="description" placeholder="この研究の目的、方法、主要な発見について簡潔に説明してください..." required></textarea>
                     </div>
                     
                     <div class="form-group">
-                        <label for="findings">主要な発見</label>
-                        <textarea id="findings" name="findings" placeholder="研究で得られた主要な結果、科学的知見について説明してください..."></textarea>
+                        <label for="findings">主要な発見 *</label>
+                        <textarea id="findings" name="findings" placeholder="研究で得られた主要な結果、科学的知見について説明してください..." required></textarea>
                     </div>
                     
                     <div class="form-group">
                         <label for="nutrition">栄養・成分データ</label>
-                        <textarea id="nutrition" name="nutrition" placeholder="例：タンパク質: 18.5g/100g, ビタミンB1: 0.8mg/100g"></textarea>
+                        <textarea id="nutrition" name="nutrition" placeholder="例：タンパク質: 18.5g/100g, ビタミンB1: 0.8mg/100g, 食物繊維: 3.2g/100g"></textarea>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">📝 研究記事を投稿</button>
+                    <button type="submit" class="btn btn-primary">📝 研究記事を投稿・自動保存</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">🗑️ クリア</button>
                 </form>
             </div>
 
@@ -647,26 +874,41 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-number" id="totalArticles">0</div>
-                        <div>投稿記事数</div>
+                        <div>保存済み記事数</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="avgTime">0:00</div>
-                        <div>平均滞在時間</div>
+                        <div class="stat-number" id="totalCommentsCount">0</div>
+                        <div>総コメント数</div>
                     </div>
                 </div>
                 <p style="text-align: center; color: #666; margin-top: 2rem;">
-                    📝 記事を投稿すると統計データが蓄積されます
+                    📝 記事投稿・コメント投稿で統計データが自動更新されます
                 </p>
             </div>
 
             <!-- 管理タブ -->
             <div id="manage-tab" class="tab-content">
-                <h3>📝 記事管理</h3>
+                <h3>📝 記事管理 <span class="auto-save-badge">自動保存中</span></h3>
                 <div id="articleList">
-                    <p style="text-align: center; color: #666; margin: 2rem 0;">
+                    <p style="text-align: center; color: #666; margin: 2rem 0;" id="noArticlesMessage">
                         まだ記事が投稿されていません。<br>
                         「✏️ 記事投稿」タブから最初の記事を投稿してみましょう！
                     </p>
+                </div>
+            </div>
+
+            <!-- バックアップタブ -->
+            <div id="backup-tab" class="tab-content">
+                <h3>💾 データバックアップ・復元</h3>
+                
+                <div style="background: #f8f9ff; padding: 1.5rem; border-radius: 15px; margin: 1rem 0; border-left: 4px solid #667eea;">
+                    <h4>📊 現在保存されているデータ</h4>
+                    <p>投稿された記事データとコメントは自動的にブラウザに保存されています。</p>
+                    <div style="background: #fff; padding: 1rem; border-radius: 8px; margin-top: 1rem; border: 1px solid #e2e8f0; font-family: monospace; font-size: 0.9rem; max-height: 200px; overflow-y: auto;" id="backupData">
+                        記事データがここに表示されます...
+                    </div>
+                    <button class="btn btn-primary" onclick="exportData()">📥 データをダウンロード</button>
+                    <button class="btn btn-secondary" onclick="clearAllData()">🗑️ 全データクリア</button>
                 </div>
             </div>
         </section>
@@ -675,7 +917,7 @@
         <section id="search" class="search-section">
             <div class="search-header">
                 <h2>🔍 研究検索</h2>
-                <p>論文、栄養成分、研究手法、地域などで検索</p>
+                <p>投稿された論文・記事から検索</p>
             </div>
             
             <div class="search-box-container">
@@ -697,29 +939,574 @@
         <section id="articles" class="articles-section">
             <div class="section-header">
                 <h2 class="section-title">📚 研究記事</h2>
-                <p class="section-subtitle">科学的根拠に基づく郷土料理研究</p>
+                <p class="section-subtitle">科学的根拠に基づく郷土料理研究 - コメント機能付き</p>
             </div>
             
             <div class="articles-grid" id="articlesGrid">
-                <div style="text-align: center; color: #666; padding: 3rem; grid-column: 1/-1;">
-                    <h3>📝 最初の記事を投稿してみましょう！</h3>
-                    <p>管理画面の「✏️ 記事投稿」から研究記事を追加できます</p>
-                    <button class="btn btn-primary" onclick="toggleAdminPanel()" style="margin-top: 1rem;">
-                        📊 管理画面を開く
-                    </button>
-                </div>
+                <!-- 記事が投稿されると自動的にここに表示されます -->
             </div>
         </section>
     </main>
 
     <footer style="background: rgba(0, 0, 0, 0.8); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
         <div class="container">
-            <p>&copy; 2025 郷土料理科学研究所 - あなたの研究成果を世界に発信</p>
-            <p>🧪 科学的根拠に基づいた郷土料理研究プラットフォーム</p>
+            <p>&copy; 2025 郷土料理科学研究所 - コメント機能付き研究プラットフォーム</p>
+            <p>🧪 記事・コメントは自動的に保存され、読者と研究者が交流できます</p>
         </div>
     </footer>
 
+    <!-- 記事詳細モーダル -->
+    <div id="articleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <div id="modalTitle"></div>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+                <div class="comments-section">
+                    <h3>💬 研究コメント・ディスカッション</h3>
+                    <div class="comment-form">
+                        <h4>コメントを投稿</h4>
+                        <div class="comment-input-group">
+                            <input type="text" id="commentAuthor" placeholder="お名前 (研究者名・所属など)" required>
+                            <textarea id="commentText" placeholder="研究に対するコメント、質問、追加情報などをお書きください..." required></textarea>
+                            <button class="btn btn-primary" onclick="addComment()">💬 コメント投稿</button>
+                        </div>
+                    </div>
+                    <div class="comments-list" id="commentsList">
+                        <!-- コメントがここに動的に追加されます -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // 記事データを保存するためのオブジェクト
+        const articleStorage = {
+            save: function(articles) {
+                try {
+                    const data = JSON.stringify(articles);
+                    localStorage.setItem('research_articles', data);
+                    localStorage.setItem('last_save_time', new Date().toISOString());
+                    this.showSaveIndicator();
+                    return true;
+                } catch (error) {
+                    console.error('保存エラー:', error);
+                    return false;
+                }
+            },
+            
+            load: function() {
+                try {
+                    const data = localStorage.getItem('research_articles');
+                    return data ? JSON.parse(data) : [];
+                } catch (error) {
+                    console.error('読み込みエラー:', error);
+                    return [];
+                }
+            },
+            
+            showSaveIndicator: function() {
+                const indicator = document.getElementById('saveIndicator');
+                indicator.style.display = 'block';
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 3000);
+            }
+        };
+
+        // グローバル変数
+        let articles = [];
+        let currentArticleIndex = -1;
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedArticles();
+            updateStatistics();
+            setupEventListeners();
+            updateBackupDisplay();
+        });
+
+        // 保存された記事を読み込み
+        function loadSavedArticles() {
+            articles = articleStorage.load();
+            displayArticles();
+            updateStatistics();
+        }
+
+        // 記事を表示
+        function displayArticles() {
+            const articlesGrid = document.getElementById('articlesGrid');
+            
+            if (articles.length === 0) {
+                articlesGrid.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 3rem; grid-column: 1/-1;">
+                        <h3>📝 最初の記事を投稿してみましょう！</h3>
+                        <p>管理画面の「✏️ 記事投稿」から研究記事を追加できます</p>
+                        <button class="btn btn-primary" onclick="toggleAdminPanel()" style="margin-top: 1rem;">
+                            📊 管理画面を開く
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            articlesGrid.innerHTML = '';
+            
+            articles.forEach((article, index) => {
+                const articleCard = createArticleCard(article, index);
+                articlesGrid.appendChild(articleCard);
+            });
+        }
+
+        // 記事カードを作成
+        function createArticleCard(article, index) {
+            const card = document.createElement('div');
+            card.className = 'article-card';
+            card.setAttribute('data-region', article.region);
+            
+            const commentsCount = article.comments ? article.comments.length : 0;
+            
+            card.innerHTML = `
+                <div class="article-image">${article.emoji || '📄'}
+                    <div class="article-rating">⭐ ${article.rating || 5.0}</div>
+                    <div class="article-stats">👁️ ${article.views || 1} 💬 ${commentsCount}</div>
+                </div>
+                <div class="article-content">
+                    <div class="article-meta">
+                        <span class="article-category">研究記事</span>
+                        <span>${article.dateCreated}</span>
+                    </div>
+                    <h3 class="article-title">${article.title}<span class="research-badge">コメント可</span></h3>
+                    <p class="article-description">${article.description}</p>
+                    <div class="article-research">
+                        <div class="research-title">🔬 主要な科学的知見</div>
+                        <p>${article.findings}</p>
+                    </div>
+                    ${article.nutrition ? `
+                    <div class="nutrition-section">
+                        <div class="nutrition-title">🧪 栄養・成分データ</div>
+                        <p>${article.nutrition}</p>
+                    </div>
+                    ` : ''}
+                    <div class="article-footer">
+                        <div class="article-actions">
+                            <button class="action-btn" onclick="editArticle(${index})">✏️ 編集</button>
+                            <button class="action-btn" onclick="deleteArticle(${index})">🗑️ 削除</button>
+                        </div>
+                        <div class="comments-count" onclick="showArticleModal(${index})">💬 ${commentsCount}件のコメント</div>
+                    </div>
+                </div>
+            `;
+            
+            // カード全体クリックでモーダル表示
+            card.addEventListener('click', function(e) {
+                // 編集・削除ボタンをクリックした場合はモーダルを開かない
+                if (!e.target.classList.contains('action-btn')) {
+                    showArticleModal(index);
+                }
+            });
+            
+            return card;
+        }
+
+        // 記事詳細モーダル表示
+        function showArticleModal(index) {
+            const article = articles[index];
+            if (!article) return;
+            
+            currentArticleIndex = index;
+            
+            const modal = document.getElementById('articleModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalTitle.innerHTML = `<h2>${article.title}</h2>`;
+            
+            modalContent.innerHTML = `
+                <div class="article-meta" style="margin-bottom: 1rem;">
+                    <span class="article-category">研究記事</span>
+                    <span>地域: ${article.region} | 投稿日: ${article.dateCreated}</span>
+                </div>
+                <div style="margin-bottom: 2rem;">
+                    <h3>📋 研究概要</h3>
+                    <p style="line-height: 1.6;">${article.description}</p>
+                </div>
+                <div style="margin-bottom: 2rem;">
+                    <h3>🔬 主要な科学的知見</h3>
+                    <p style="line-height: 1.6;">${article.findings}</p>
+                </div>
+                ${article.nutrition ? `
+                <div style="margin-bottom: 2rem;">
+                    <h3>🧪 栄養・成分データ</h3>
+                    <p style="line-height: 1.6; background: #f0f9ff; padding: 1rem; border-radius: 8px;">${article.nutrition}</p>
+                </div>
+                ` : ''}
+                <div style="background: #f8f9ff; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h4>📊 記事統計</h4>
+                    <p>閲覧数: ${article.views || 1} | コメント: ${article.comments ? article.comments.length : 0}件 | 評価: ⭐${article.rating || 5.0}</p>
+                </div>
+            `;
+            
+            // コメントを表示
+            displayComments(article.comments || []);
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // 閲覧数を増加
+            updateViewCount(index);
+        }
+
+        // コメント表示
+        function displayComments(comments) {
+            const commentsList = document.getElementById('commentsList');
+            
+            if (comments.length === 0) {
+                commentsList.innerHTML = `
+                    <p style="text-align: center; color: #666; margin: 2rem 0;">
+                        まだコメントがありません。最初のコメントを投稿してみましょう！
+                    </p>
+                `;
+                return;
+            }
+            
+            commentsList.innerHTML = comments.map(comment => `
+                <div class="comment">
+                    <div class="comment-header">
+                        <div class="comment-author">${comment.author}</div>
+                        <div class="comment-date">${comment.date}</div>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                </div>
+            `).join('');
+        }
+
+        // コメント追加
+        function addComment() {
+            const authorInput = document.getElementById('commentAuthor');
+            const textInput = document.getElementById('commentText');
+            
+            const author = authorInput.value.trim();
+            const text = textInput.value.trim();
+            
+            if (!author || !text) {
+                alert('お名前とコメント内容を入力してください。');
+                return;
+            }
+            
+            if (currentArticleIndex === -1) return;
+            
+            const newComment = {
+                id: Date.now(),
+                author: author,
+                text: text,
+                date: new Date().toLocaleString('ja-JP'),
+                timestamp: new Date().toISOString()
+            };
+            
+            // 記事にコメントを追加
+            if (!articles[currentArticleIndex].comments) {
+                articles[currentArticleIndex].comments = [];
+            }
+            articles[currentArticleIndex].comments.push(newComment);
+            
+            // データを保存
+            articleStorage.save(articles);
+            
+            // 表示を更新
+            displayComments(articles[currentArticleIndex].comments);
+            displayArticles();
+            updateStatistics();
+            
+            // フォームをクリア
+            authorInput.value = '';
+            textInput.value = '';
+            
+            alert('💬 コメントが投稿されました！');
+        }
+
+        // イベントリスナーの設定
+        function setupEventListeners() {
+            // 記事投稿フォーム
+            document.getElementById('articleForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleArticleSubmission();
+            });
+
+            // 検索機能
+            document.getElementById('searchInput').addEventListener('input', function() {
+                filterArticles();
+            });
+
+            // フィルターボタン
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    toggleFilter(this);
+                    filterArticles();
+                });
+            });
+
+            // モーダル閉じる
+            document.querySelector('.close').addEventListener('click', closeModal);
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('articleModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // 記事投稿処理
+        function handleArticleSubmission() {
+            const formData = new FormData(document.getElementById('articleForm'));
+            const articleData = {
+                id: Date.now(),
+                title: formData.get('title'),
+                region: formData.get('region'),
+                emoji: formData.get('emoji'),
+                description: formData.get('description'),
+                findings: formData.get('findings'),
+                nutrition: formData.get('nutrition'),
+                views: 1,
+                comments: [],
+                rating: 5.0,
+                dateCreated: new Date().toLocaleDateString('ja-JP'),
+                timeCreated: new Date().toISOString()
+            };
+            
+            if (articleData.title && articleData.description && articleData.findings) {
+                // 記事を配列に追加
+                articles.unshift(articleData);
+                
+                // 自動保存
+                const saved = articleStorage.save(articles);
+                
+                if (saved) {
+                    // 表示を更新
+                    displayArticles();
+                    updateStatistics();
+                    updateArticleManagement();
+                    
+                    // 成功メッセージ表示
+                    showSuccessMessage();
+                    clearForm();
+                } else {
+                    alert('❌ 保存に失敗しました。もう一度お試しください。');
+                }
+            } else {
+                alert('❗ タイトル、研究概要、主要な発見は必須項目です。');
+            }
+        }
+
+        // 成功メッセージ表示
+        function showSuccessMessage() {
+            const message = document.getElementById('successMessage');
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        }
+
+        // 統計更新
+        function updateStatistics() {
+            const totalComments = articles.reduce((sum, article) => sum + (article.comments ? article.comments.length : 0), 0);
+            
+            document.getElementById('heroPapers').textContent = articles.length;
+            document.getElementById('totalArticles').textContent = articles.length;
+            document.getElementById('heroComments').textContent = totalComments;
+            document.getElementById('totalCommentsCount').textContent = totalComments;
+            
+            const totalViews = articles.reduce((sum, article) => sum + (article.views || 1), 0);
+            document.getElementById('heroViews').textContent = totalViews;
+        }
+
+        // 閲覧数更新
+        function updateViewCount(index) {
+            if (articles[index]) {
+                articles[index].views = (articles[index].views || 1) + 1;
+                articleStorage.save(articles);
+                updateStatistics();
+            }
+        }
+
+        // 記事管理画面更新
+        function updateArticleManagement() {
+            const articleList = document.getElementById('articleList');
+            const noArticlesMessage = document.getElementById('noArticlesMessage');
+            
+            if (articles.length === 0) {
+                if (noArticlesMessage) {
+                    noArticlesMessage.style.display = 'block';
+                }
+                return;
+            }
+            
+            if (noArticlesMessage) {
+                noArticlesMessage.style.display = 'none';
+            }
+            
+            articleList.innerHTML = articles.map((article, index) => {
+                const commentsCount = article.comments ? article.comments.length : 0;
+                return `
+                    <div class="article-item" style="border: 1px solid #e2e8f0; padding: 1rem; margin: 1rem 0; border-radius: 8px;">
+                        <h4>${article.title} <span style="color: #667eea;">(閲覧数: ${article.views || 1}, コメント: ${commentsCount}件)</span></h4>
+                        <p>地域: ${article.region} | 投稿日: ${article.dateCreated}</p>
+                        <button class="btn btn-primary" onclick="editArticle(${index})">✏️ 編集</button>
+                        <button class="btn btn-secondary" onclick="deleteArticle(${index})">🗑️ 削除</button>
+                        <button class="btn btn-primary" onclick="showArticleModal(${index})" style="background: #10b981;">💬 コメント確認</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 記事編集
+        function editArticle(index) {
+            const article = articles[index];
+            if (!article) return;
+            
+            // フォームに記事データを設定
+            document.getElementById('title').value = article.title;
+            document.getElementById('region').value = article.region;
+            document.getElementById('emoji').value = article.emoji || '';
+            document.getElementById('description').value = article.description;
+            document.getElementById('findings').value = article.findings;
+            document.getElementById('nutrition').value = article.nutrition || '';
+            
+            // 記事投稿タブに切り替え
+            switchTab('create');
+            toggleAdminPanel();
+            
+            // 元の記事を削除（編集のため）
+            articles.splice(index, 1);
+            articleStorage.save(articles);
+            displayArticles();
+            updateStatistics();
+            updateArticleManagement();
+            
+            alert('📝 記事データをフォームに読み込みました。編集して再投稿してください。');
+        }
+
+        // 記事削除
+        function deleteArticle(index) {
+            const article = articles[index];
+            if (!article) return;
+            
+            const commentsCount = article.comments ? article.comments.length : 0;
+            const confirmMessage = commentsCount > 0 
+                ? `🗑️ 「${article.title}」を削除してもよろしいですか？\n※ ${commentsCount}件のコメントも一緒に削除されます。`
+                : `🗑️ 「${article.title}」を削除してもよろしいですか？`;
+            
+            if (confirm(confirmMessage)) {
+                articles.splice(index, 1);
+                articleStorage.save(articles);
+                displayArticles();
+                updateStatistics();
+                updateArticleManagement();
+                alert('✅ 記事が削除されました。');
+            }
+        }
+
+        // データエクスポート
+        function exportData() {
+            const totalComments = articles.reduce((sum, article) => sum + (article.comments ? article.comments.length : 0), 0);
+            
+            const data = {
+                articles: articles,
+                exportDate: new Date().toISOString(),
+                totalArticles: articles.length,
+                totalComments: totalComments,
+                version: '2.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `research_articles_with_comments_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('📥 記事データ（コメント含む）がダウンロードされました！');
+        }
+
+        // バックアップ表示更新
+        function updateBackupDisplay() {
+            const backupData = document.getElementById('backupData');
+            if (articles.length > 0) {
+                const summary = {
+                    記事数: articles.length,
+                    総コメント数: articles.reduce((sum, article) => sum + (article.comments ? article.comments.length : 0), 0),
+                    最新記事: articles[0] ? articles[0].title : 'なし',
+                    最終更新: new Date().toLocaleString('ja-JP')
+                };
+                backupData.textContent = JSON.stringify(summary, null, 2);
+            } else {
+                backupData.textContent = '保存された記事データはまだありません。';
+            }
+        }
+
+        // 全データクリア
+        function clearAllData() {
+            if (confirm('⚠️ 全ての記事データとコメントを削除してもよろしいですか？この操作は取り消せません。')) {
+                if (confirm('🚨 本当に削除しますか？バックアップは取得済みですか？')) {
+                    localStorage.removeItem('research_articles');
+                    localStorage.removeItem('last_save_time');
+                    articles = [];
+                    displayArticles();
+                    updateStatistics();
+                    updateArticleManagement();
+                    updateBackupDisplay();
+                    alert('✅ 全データが削除されました。');
+                }
+            }
+        }
+
+        // モーダル閉じる
+        function closeModal() {
+            const modal = document.getElementById('articleModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentArticleIndex = -1;
+        }
+
+        // フィルター切り替え
+        function toggleFilter(button) {
+            const parentSection = button.closest('.filter-buttons');
+            if (parentSection) {
+                parentSection.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+            }
+            button.classList.add('active');
+        }
+
+        // 記事フィルタリング
+        function filterArticles() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+            
+            const articleCards = document.querySelectorAll('.article-card');
+            
+            articleCards.forEach(card => {
+                const matchesSearch = searchTerm === '' || 
+                    card.textContent.toLowerCase().includes(searchTerm);
+                
+                const matchesRegion = activeFilter === 'all' || 
+                    card.getAttribute('data-region') === activeFilter;
+                
+                if (matchesSearch && matchesRegion) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
         // 管理者パネルの表示切替
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
@@ -737,99 +1524,19 @@
             
             document.getElementById(tabName + '-tab').classList.add('active');
             event.target.classList.add('active');
-        }
-
-        // 記事投稿フォーム処理
-        document.getElementById('articleForm').addEventListener('submit', function(e) {
-            e.preventDefault();
             
-            const formData = new FormData(this);
-            const articleData = {
-                title: formData.get('title'),
-                region: formData.get('region'),
-                emoji: formData.get('emoji'),
-                description: formData.get('description'),
-                findings: formData.get('findings'),
-                nutrition: formData.get('nutrition'),
-                views: 1,
-                comments: 0,
-                rating: 5.0,
-                dateCreated: new Date().toLocaleDateString('ja-JP')
-            };
-            
-            if (articleData.title && articleData.description) {
-                addNewArticleCard(articleData);
-                
-                // 統計更新
-                document.getElementById('heroPapers').textContent = 
-                    parseInt(document.getElementById('heroPapers').textContent) + 1;
-                document.getElementById('totalArticles').textContent = 
-                    parseInt(document.getElementById('totalArticles').textContent) + 1;
-                
-                alert('📝 研究記事が正常に投稿されました！');
-                clearForm();
-            } else {
-                alert('タイトルと研究概要は必須です。');
+            // タブが選択された場合の処理
+            if (tabName === 'manage') {
+                updateArticleManagement();
+            } else if (tabName === 'backup') {
+                updateBackupDisplay();
             }
-        });
-
-        // 新しい記事カードを追加
-        function addNewArticleCard(data) {
-            const articlesGrid = document.getElementById('articlesGrid');
-            
-            // 初期メッセージを削除
-            const placeholder = articlesGrid.querySelector('div[style*="grid-column"]');
-            if (placeholder) {
-                placeholder.remove();
-            }
-            
-            const newCard = document.createElement('div');
-            newCard.className = 'article-card';
-            
-            newCard.innerHTML = `
-                <div class="article-image">${data.emoji || '📄'}
-                    <div class="article-rating">⭐ ${data.rating}</div>
-                    <div class="article-stats">👁️ ${data.views} 💬 ${data.comments}</div>
-                </div>
-                <div class="article-content">
-                    <div class="article-meta">
-                        <span class="article-category">研究記事</span>
-                        <span>${data.dateCreated}</span>
-                    </div>
-                    <h3 class="article-title">${data.title}<span class="research-badge">新着</span></h3>
-                    <p class="article-description">${data.description}</p>
-                    <div class="article-research">
-                        <div class="research-title">🔬 主要な科学的知見</div>
-                        <p>${data.findings}</p>
-                    </div>
-                    <div class="article-footer">
-                        <div class="article-actions">
-                            <button class="action-btn">❤️ お気に入り</button>
-                            <button class="action-btn">📤 シェア</button>
-                        </div>
-                        <div class="comments-count">💬 ${data.comments}件のコメント</div>
-                    </div>
-                </div>
-            `;
-            
-            articlesGrid.appendChild(newCard);
         }
 
         // フォームクリア
         function clearForm() {
             document.getElementById('articleForm').reset();
         }
-
-        // 統計の更新（訪問者数カウント）
-        function updateStats() {
-            const currentViews = parseInt(document.getElementById('heroViews').textContent);
-            document.getElementById('heroViews').textContent = currentViews + 1;
-        }
-
-        // ページ読み込み時に統計更新
-        window.addEventListener('load', function() {
-            updateStats();
-        });
 
         // スムーズスクロール
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -844,6 +1551,12 @@
                 }
             });
         });
+
+        // 初期表示で記事管理リストを更新
+        setTimeout(() => {
+            updateArticleManagement();
+            updateBackupDisplay();
+        }, 1000);
     </script>
 </body>
-</html>             
+</html>
