@@ -1260,57 +1260,124 @@ index.html
                 }
             });
         }
-
-        // 記事投稿処理
-        function handleArticleSubmission() {
-            const formData = new FormData(document.getElementById('articleForm'));
-            const articleData = {
-                id: Date.now(),
-                title: formData.get('title'),
-                region: formData.get('region'),
-                emoji: formData.get('emoji'),
-                description: formData.get('description'),
-                findings: formData.get('findings'),
-                nutrition: formData.get('nutrition'),
-                views: 1,
-                comments: [],
-                rating: 5.0,
-                dateCreated: new Date().toLocaleDateString('ja-JP'),
-                timeCreated: new Date().toISOString()
-            };
-            
-            if (articleData.title && articleData.description && articleData.findings) {
-                // 記事を配列に追加
-                articles.unshift(articleData);
-                
-                // 自動保存
-                const saved = articleStorage.save(articles);
-                
-                if (saved) {
-                    // 表示を更新
-                    displayArticles();
-                    updateStatistics();
-                    updateArticleManagement();
-                    
-                    // 成功メッセージ表示
-                    showSuccessMessage();
-                    clearForm();
-                } else {
-                    alert('❌ 保存に失敗しました。もう一度お試しください。');
-                }
-            } else {
-                alert('❗ タイトル、研究概要、主要な発見は必須項目です。');
+// 記事投稿処理（修正版）
+async function handleArticleSubmission() {
+    const formData = new FormData(document.getElementById('articleForm'));
+    
+    const airtableData = {
+        records: [{
+            fields: {
+                Title: formData.get('title'),
+                Category: formData.get('category'),
+                Region: formData.get('region'),
+                Description: formData.get('description'),
+                Methodology: formData.get('methodology'),
+                Findings: formData.get('findings'),
+                Nutrition: formData.get('nutrition'),
+                Citations: formData.get('citations'),
+                DateCreated: new Date().toISOString().split('T')[0],
+                Emoji: formData.get('emoji')
             }
-        }
+        }]
+    };
 
-        // 成功メッセージ表示
-        function showSuccessMessage() {
-            const message = document.getElementById('successMessage');
-            message.style.display = 'block';
-            setTimeout(() => {
-                message.style.display = 'none';
-            }, 5000);
+    try {
+        const response = await fetch('https://api.airtable.com/v0/appvr7QVuqnAHHc41/Articles', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer patyv6TUbEZKB04Vj.58dc9f613796ad95ca20b1a869321630fef6be0b2cc4ba9359c509a54cb031dd',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(airtableData)
+        });
+
+        if (response.ok) {
+            alert('記事が正常に投稿されました。全員が閲覧できます。');
+            clearForm();
+            loadArticlesFromAirtable(); // 記事一覧を更新
+        } else {
+            throw new Error('投稿に失敗しました');
         }
+    } catch (error) {
+        alert('投稿中にエラーが発生しました');
+        console.error('Error:', error);
+    }
+}
+
+// Airtableから記事を読み込む
+async function loadArticlesFromAirtable() {
+    try {
+        const response = await fetch('https://api.airtable.com/v0/appvr7QVuqnAHHc41/Articles?sort[0][field]=DateCreated&sort[0][direction]=desc', {
+            headers: {
+                'Authorization': 'Bearer patyv6TUbEZKB04Vj.58dc9f613796ad95ca20b1a869321630fef6be0b2cc4ba9359c509a54cb031dd'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            displayAirtableArticles(data.records);
+        } else {
+            console.error('記事の読み込みに失敗しました');
+        }
+    } catch (error) {
+        console.error('エラー:', error);
+    }
+}
+
+// Airtableの記事をサイトに表示
+function displayAirtableArticles(records) {
+    const articlesGrid = document.getElementById('articlesGrid');
+    articlesGrid.innerHTML = ''; // 既存の記事をクリア
+    
+    records.forEach(record => {
+        const fields = record.fields;
+        const articleCard = document.createElement('div');
+        articleCard.className = 'article-card';
+        articleCard.setAttribute('data-category', fields.Category || '');
+        articleCard.setAttribute('data-region', fields.Region || '');
+        articleCard.setAttribute('data-rating', '4.5');
+        
+        articleCard.innerHTML = `
+            <div class="article-image">${fields.Emoji || '🍲'}
+                <div class="article-rating">⭐ 4.5</div>
+                <div class="article-stats">👁️ 0 💬 0</div>
+            </div>
+            <div class="article-content">
+                <div class="article-meta">
+                    <span class="article-category">${fields.Category || '未分類'}</span>
+                    <span>${formatDate(fields.DateCreated)}</span>
+                </div>
+                <h3 class="article-title">${fields.Title}<span class="research-badge">新着</span></h3>
+                <p class="article-description">${fields.Description || ''}</p>
+                <div class="article-research">
+                    <div class="research-title">🔬 主要な科学的知見</div>
+                    <p>${fields.Findings || ''}</p>
+                    <div class="research-citation">出典: ${fields.Citations || ''}</div>
+                </div>
+                <div class="article-footer">
+                    <div class="article-actions">
+                        <button class="action-btn" onclick="toggleFavorite(this)">❤️ お気に入り</button>
+                        <button class="action-btn" onclick="shareArticle(this)">📤 シェア</button>
+                    </div>
+                    <div class="comments-count">💬 0件のコメント</div>
+                </div>
+            </div>
+        `;
+        
+        articlesGrid.appendChild(articleCard);
+        
+        // クリックイベントを追加
+        articleCard.addEventListener('click', function() {
+            showArticleModal(this);
+        });
+    });
+}
+
+// 日付フォーマット関数
+function formatDate(dateString) {
+    if (!dateString) return '不明';
+    return new Date(dateString).toLocaleDateString('ja-JP');
+}
 
         // 統計更新
         function updateStatistics() {
